@@ -1,52 +1,43 @@
 #include "sort.h"
-#include <stdlib.h>
-#include <stdio.h>
-
 /**
-  * counting_sort - Afunction that sorts an array using counting algorithm.
-  * @array: The array to sort.
-  * @size: The length of the array.
-  * Return: Nothing.
-  */
+ * counting_sort - sorts an array of integers in ascending
+ * order using the Counting sort algorithm
+ * @array: pointer to array
+ * @size: size of the array
+ **/
 void counting_sort(int *array, size_t size)
 {
-	unsigned int i = 1;
-	int *counter = NULL, k = 0, j = 0;
+	int n, j, *count_array, *aux;
+	size_t i;
 
-	if (array == NULL || size < 2)
+	if (!array || size < 2)
 		return;
-
-	k = array[0];
-	for (; i < size; i++)
-	{
-		if (array[i] > k)
-			k = array[i];
-	}
-
-	counter = malloc(sizeof(int) * (k + 1));
-	if (counter == NULL)
-		return;
-
-	for (j = 0; j <= k; j++)
-		counter[j] = 0;
-	for (i = 0; i < size; i++)
-		counter[array[i]] += 1;
-	for (j = 0; j < k; j++)
-	{
-		counter[j + 1] += counter[j];
-		printf("%d, ", counter[j]);
-	}
-	counter[j + 1] += counter[j];
-	printf("%d\n", counter[j + 1]);
+	n = array[0];
 	for (i = 0; i < size; i++)
 	{
-		j = counter[array[i]] - 1;
-		if (array[i] != array[j])
-		{
-			k = array[i];
-			array[i] = array[j];
-			array[j] = k;
-		}
+		if (array[i] > n)
+			n = array[i];
 	}
-	free(counter);
+	count_array = calloc((n + 1), sizeof(int));
+	for (i = 0; i < size; i++)
+	{
+		count_array[array[i]]++;
+	}
+	for (j = 1; j < n; j++)
+	{
+		count_array[j + 1] += count_array[j];
+	}
+	print_array(count_array, n + 1);
+	aux = malloc(sizeof(int) * size);
+	for (i = 0; i < size; i++)
+	{
+		count_array[array[i]]--;
+		aux[count_array[array[i]]] = array[i];
+	}
+	for (i = 0; i < size; i++)
+	{
+		array[i] = aux[i];
+	}
+	free(aux);
+	free(count_array);
 }
